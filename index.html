@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Open Economy IS-LM Model and Trade</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What does the open economy IS relation represent in terms of demand for domestic goods?", choices: ["Domestic demand for domestic goods", "Domestic and foreign demand for domestic goods", "Domestic demand for foreign goods", "Only government demand for domestic goods"], correct: 1 },
+        { question: "How does an increase in domestic income affect imports in an open economy?", choices: ["Imports decrease", "Imports remain unchanged", "Imports increase", "Imports become cheaper"], correct: 2 },
+        { question: "In an open economy, what happens to exports when the domestic currency appreciates?", choices: ["Exports increase", "Exports decrease", "Exports remain unchanged", "Exports increase but imports decrease"], correct: 1 },
+        { question: "What is the effect of an increase in foreign income on a country’s exports?", choices: ["Exports decrease", "Exports increase", "Exports remain unchanged", "Exports become more expensive"], correct: 1 },
+        { question: "What does the Marshall-Lerner condition specify?", choices: ["A depreciation of the currency will lead to an increase in net exports only if the combined elasticities of exports and imports are greater than one", "A depreciation of the currency automatically leads to a reduction in imports", "An appreciation of the currency will decrease the trade balance", "Depreciation and appreciation have no effect on the trade balance"], correct: 0 },
+        { question: "In the open economy IS-LM model, what happens to the multiplier when government spending increases in an open economy compared to a closed economy?", choices: ["It becomes larger in the open economy", "It becomes smaller in the open economy", "It remains the same", "It fluctuates based on exchange rates"], correct: 1 },
+        { question: "What is the likely effect on the trade balance when a country increases its government spending?", choices: ["The trade balance improves", "The trade balance deteriorates", "The trade balance remains unchanged", "The trade balance becomes positive"], correct: 1 },
+        { question: "Which policy mix would help reduce a trade deficit while maintaining the same level of output?", choices: ["Expansionary fiscal policy and contractionary monetary policy", "Depreciation of the currency and reduction in government spending", "Appreciation of the currency and increase in government spending", "Depreciation of the currency and expansionary fiscal policy"], correct: 1 },
+        { question: "What is the net export curve (NX) in the open economy model?", choices: ["The curve showing the relationship between domestic income and exports", "The curve that shows the relationship between output and net exports", "The curve that measures the trade balance at different levels of inflation", "The curve that predicts currency fluctuations based on trade deficits"], correct: 1 },
+        { question: "What is the UIP (uncovered interest parity) condition?", choices: ["The interest rate in one country should always be higher than in another", "The difference in interest rates between two countries equals the expected change in the exchange rate", "The difference in inflation between two countries determines their interest rate differentials", "The central bank controls both exchange rates and interest rates simultaneously"], correct: 1 },
+        { question: "In the IS-LM model for an open economy, what happens to the domestic currency if the central bank raises the domestic interest rate?", choices: ["The currency depreciates", "The currency appreciates", "The currency becomes volatile", "The currency remains unchanged"], correct: 1 },
+        { question: "Which of the following best describes the international policy trilemma?", choices: ["It is impossible for a country to have a fixed exchange rate, free capital flows, and an independent monetary policy simultaneously", "It is impossible to maintain both low inflation and high output in an open economy", "Countries can either control the exchange rate or inflation, but not both", "The trilemma states that fiscal policy cannot impact the trade balance in an open economy"], correct: 0 },
+        { question: "What happens to the net export curve (NX) when there is an increase in foreign demand for domestic goods?", choices: ["The NX curve shifts to the right", "The NX curve shifts to the left", "The NX curve remains unchanged", "The NX curve becomes vertical"], correct: 0 },
+        { question: "What is the likely outcome when there is an increase in domestic demand for both domestic and foreign goods in an open economy?", choices: ["Trade surplus", "Trade deficit", "Balanced trade", "Increased exports"], correct: 1 },
+        { question: "How does a contractionary monetary policy affect output and the exchange rate in an open economy?", choices: ["Output decreases and the exchange rate depreciates", "Output increases and the exchange rate appreciates", "Output decreases and the exchange rate appreciates", "Output remains the same and the exchange rate depreciates"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
